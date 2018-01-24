@@ -1,7 +1,9 @@
 var express = require("express");
 var app = express();
 const bodyParser = require("body-parser");
+const cookieParser = require('cookie-parser');
 app.use(bodyParser.urlencoded({extended: true}));
+app.use(cookieParser());
 var PORT = process.env.PORT || 8080; // default port 8080
 
 function generateRandomString() {
@@ -31,6 +33,11 @@ app.get("/urls/:id", (req, res) => {
   // get the long url from the urlDatabase to pass in the render function
   let templateVars = { shortURL: req.params.id, url: urlDatabase[req.params.id] };
   res.render("urls_show", templateVars);
+});
+
+app.post("/login", (req, res) => {
+  res.cookie('username', req.body.username);
+  res.redirect("http://localhost:8080/urls/");
 });
 
 app.post("/urls/:id/delete", (req, res) => {
