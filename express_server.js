@@ -10,7 +10,8 @@ var urlDatabase = {
 };
 
 app.get("/", (req, res) => {
-  res.end("Hello!");
+  let templateVars = { urls: urlDatabase };
+  res.render("urls_new", templateVars);
 });
 
 app.get("/urls", (req, res) => {
