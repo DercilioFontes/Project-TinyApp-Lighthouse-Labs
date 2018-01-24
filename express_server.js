@@ -18,13 +18,11 @@ app.get("/urls", (req, res) => {
   res.render("urls_index", templateVars);
 });
 
-// app.get("/urls.json", (req, res) => {
-//   res.json(urlDatabase);
-// });
-
-// app.get("/hello", (req, res) => {
-//   res.end("<html><body>Hello <b>World</b></body></html>\n");
-// });
+app.get("/urls/:id", (req, res) => {
+  // get the long url from the urlDatabase to pass in the render function
+  let templateVars = { shortURL: req.params.id, url: urlDatabase[req.params.id] };
+  res.render("urls_show", templateVars);
+});
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
