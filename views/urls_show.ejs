@@ -8,6 +8,11 @@
     <!-- Add your EJS code here -->
   <ul>
      <li><%= shortURL %> : <%= url %></li>
+     <% const urlID = "/urls/" + shortURL + "/delete/" %>
+     <form method="POST" action= <%= urlID %> >
+      <button>Delete</button>
+     </form>
   </ul>
+  <p><a href="/urls">Show all</a></p>
 </body>
 </html>
