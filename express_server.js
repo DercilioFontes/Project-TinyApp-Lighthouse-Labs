@@ -19,6 +19,17 @@ function generateRandomString() {
   return randomStr;
 }
 
+function hasUserEmail (email) {
+  for (let user in users) {
+    console.log(users[user].email);
+    if (users[user].email === email) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+}
+
 // users DB Format:
 // const users = {
 //   "userRandomID": {
@@ -63,10 +74,17 @@ app.get("/urls/:id", (req, res) => {
 // POST receiving email and password and
 // setting the cookie and redirect to /urls
 app.post("/register", (req, res) => {
-  const user_id = generateRandomString();
-  users[user_id] = {"id": user_id, "email": req.body.email, "password": req.body.password};
-  res.cookie('user_id', user_id);
-  res.redirect("http://localhost:8080/urls/");
+
+  if(!req.body.email || !req.body.password) {
+    res.sendStatus(400);
+  } else if (hasUserEmail(req.body.email)) {
+    res.sendStatus(400);
+  } else {
+    const user_id = generateRandomString();
+    users[user_id] = {"id": user_id, "email": req.body.email, "password": req.body.password};
+    res.cookie('user_id', user_id);
+    res.redirect("http://localhost:8080/urls/");
+  }
 });
 
 // Return the username cookie
@@ -84,7 +102,6 @@ app.post("/logout", (req, res) => {
 app.get("/urls", (req, res) => {
   templateVars.username = req.cookies.username;
   templateVars.user_id = req.cookies.user_id;
-  console.log(templateVars);
   res.render("urls_index", templateVars);
 });
 
