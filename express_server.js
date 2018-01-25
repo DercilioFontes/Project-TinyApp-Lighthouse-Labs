@@ -19,11 +19,20 @@ function generateRandomString() {
   return randomStr;
 }
 
-// Format:
-// var userDataBase = {
-//   id: {id: 'id', email: '', password: ''}
+// users DB Format:
+// const users = {
+//   "userRandomID": {
+//     id: "userRandomID",
+//     email: "user@example.com",
+//     password: "purple-monkey-dinosaur"
+//   },
+//  "user2RandomID": {
+//     id: "user2RandomID",
+//     email: "user2@example.com",
+//     password: "dishwasher-funk"
+//   }
 // };
-var userDataBase = {};
+const users = {};
 
 var urlDataBase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
@@ -53,9 +62,9 @@ app.get("/urls/:id", (req, res) => {
 
 // POST to receive email and password
 app.post("/register", (req, res) => {
-  const id = Object.keys(userDataBase).length + 1;
-  userDataBase[id] = {"id": id, "email": req.body.email, "password": req.body.password};
-  console.log(userDataBase);
+  const id = generateRandomString();
+  users[id] = {"id": id, "email": req.body.email, "password": req.body.password};
+  console.log(users);
   res.redirect("http://localhost:8080/urls/");
 });
 
