@@ -21,7 +21,6 @@ function generateRandomString() {
 
 function hasUserEmail (email) {
   for (let user in users) {
-    console.log(users[user].email);
     if (users[user].email === email) {
       return true;
     } else {
@@ -50,24 +49,27 @@ var urlDataBase = {
   "9sm5xK": "http://www.google.com"
 };
 
-let templateVars = {
-  urls: urlDataBase
-};
 
 app.get("/register", (req, res) => {
   res.render("urls_register");
 });
 
+app.get("/login", (req, res) => {
+  res.render("urls_login");
+});
+
 // Let us to form for new one
 app.get("/urls/new", (req, res) => {
+  const templateVars = users[req.cookies.user_id];
   res.render("urls_new", templateVars);
 });
 
 // Let us to especific page for shortURL
 app.get("/urls/:id", (req, res) => {
   // get the long url from the urlDataBase to pass in the render function
-  templateVars.shortURL = req.params.id;
-  templateVars.url = urlDataBase[req.params.id];
+  const templateVars = users[req.cookies.user_id];
+  // templateVars.shortURL = req.params.id;
+  // templateVars.url = urlDataBase[req.params.id];
   res.render("urls_show", templateVars);
 });
 
@@ -100,8 +102,7 @@ app.post("/logout", (req, res) => {
 
 // Let us to the index
 app.get("/urls", (req, res) => {
-  templateVars.username = req.cookies.username;
-  templateVars.user_id = req.cookies.user_id;
+  const templateVars = users[req.cookies.user_id];
   res.render("urls_index", templateVars);
 });
 

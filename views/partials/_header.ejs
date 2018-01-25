@@ -7,11 +7,6 @@
       <button type="submit"> Logout</button>
     </form>
   <% } else  { %>
-    <form method="POST" action="/login">
-      <label>Username:</label>
-      <input type="text" name="username" value="<%= username %>">
-      <button type="submit">Submit</button>
-    </form>
   <% } %>
   <p><a href="/urls/new" >Make new one</a><p><a href="/urls">Show all</a></p></p>
 </header>
