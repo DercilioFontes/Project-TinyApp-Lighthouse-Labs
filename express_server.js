@@ -60,11 +60,12 @@ app.get("/urls/:id", (req, res) => {
   res.render("urls_show", templateVars);
 });
 
-// POST to receive email and password
+// POST receiving email and password and
+// setting the cookie and redirect to /urls
 app.post("/register", (req, res) => {
-  const id = generateRandomString();
-  users[id] = {"id": id, "email": req.body.email, "password": req.body.password};
-  console.log(users);
+  const user_id = generateRandomString();
+  users[user_id] = {"id": user_id, "email": req.body.email, "password": req.body.password};
+  res.cookie('user_id', user_id);
   res.redirect("http://localhost:8080/urls/");
 });
 
@@ -82,6 +83,8 @@ app.post("/logout", (req, res) => {
 // Let us to the index
 app.get("/urls", (req, res) => {
   templateVars.username = req.cookies.username;
+  templateVars.user_id = req.cookies.user_id;
+  console.log(templateVars);
   res.render("urls_index", templateVars);
 });
 
