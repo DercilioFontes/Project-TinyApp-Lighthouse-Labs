@@ -29,6 +29,28 @@ function hasUserEmail (email) {
   }
 }
 
+function hasUserPassword (email, password) {
+  for (let user in users) {
+    if (users[user].email === email) {
+      if (users[user].password === password) {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      return false;
+    }
+  }
+}
+
+function getUser_id(email) {
+  for (let user in users) {
+    if (users[user].email === email) {
+      return users[user].id;
+    }
+  }
+}
+
 // users DB Format:
 // const users = {
 //   "userRandomID": {
@@ -42,9 +64,10 @@ function hasUserEmail (email) {
 //     password: "dishwasher-funk"
 //   }
 // };
+
 const users = {};
 
-var urlDataBase = {
+var urlsDB = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
 };
@@ -60,16 +83,20 @@ app.get("/login", (req, res) => {
 
 // Let us to form for new one
 app.get("/urls/new", (req, res) => {
-  const templateVars = users[req.cookies.user_id];
+  const templateVars = {
+    urls: urlsDB,
+    user: users[req.cookies.user_id]
+  };
   res.render("urls_new", templateVars);
 });
 
 // Let us to especific page for shortURL
 app.get("/urls/:id", (req, res) => {
   // get the long url from the urlDataBase to pass in the render function
-  const templateVars = users[req.cookies.user_id];
-  // templateVars.shortURL = req.params.id;
-  // templateVars.url = urlDataBase[req.params.id];
+  const templateVars = {
+    urls: urlsDB,
+    user: users[req.cookies.user_id]
+  };
   res.render("urls_show", templateVars);
 });
 
@@ -89,10 +116,17 @@ app.post("/register", (req, res) => {
   }
 });
 
-// Return the username cookie
+// Checks email, password and set cookie user_id
 app.post("/login", (req, res) => {
-  res.cookie('username', req.body.username);
-  res.redirect("http://localhost:8080/urls/");
+  if (!hasUserEmail(req.body.email)) {
+    res.sendStatus(403);
+  } else if (!hasUserPassword(req.body.email, req.body.password)) {
+    res.sendStatus(403);
+  } else {
+    console.log(getUser_id(req.body.email));
+    res.cookie('user_id', getUser_id(req.body.email));
+    res.redirect("http://localhost:8080/urls/");
+  }
 });
 
 app.post("/logout", (req, res) => {
@@ -102,7 +136,10 @@ app.post("/logout", (req, res) => {
 
 // Let us to the index
 app.get("/urls", (req, res) => {
-  const templateVars = users[req.cookies.user_id];
+  const templateVars = {
+    urls: urlsDB,
+    user: users[req.cookies.user_id]
+  };
   res.render("urls_index", templateVars);
 });
 

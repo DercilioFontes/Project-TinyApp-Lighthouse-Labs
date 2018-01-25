@@ -1,12 +1,10 @@
 <!-- views/partials/_header.ejs -->
 <header>
   <h1>Project: TinyApp - Lighthouse Labs</h1>
-  <% if (username) { %>
-    <p>Username: <%= username %></p>
-    <form method="POST" action="/logout">
-      <button type="submit"> Logout</button>
-    </form>
+  <% if (user) { %>
+    <a href="/login">Login</a>
   <% } else  { %>
+    <a href="/Register">Register</a>
   <% } %>
-  <p><a href="/urls/new" >Make new one</a><p><a href="/urls">Show all</a></p></p>
+  <!-- <p><a href="/urls/new" >Make new one</a><p><a href="/urls">Show all</a></p></p> -->
 </header>
