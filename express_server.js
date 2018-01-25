@@ -47,16 +47,15 @@ app.post("/login", (req, res) => {
   res.redirect("http://localhost:8080/urls/");
 });
 
+app.post("/logout", (req, res) => {
+  res.clearCookie('username');
+  res.redirect("http://localhost:8080/urls/");
+});
+
 // Let us to the index
 app.get("/urls", (req, res) => {
-  // Check if it has username cookie (if not sets 'username')
-  if (!req.cookies.username) {
-    templateVars.username = 'username';
-    res.render("urls_index", templateVars);
-  } else {
-    templateVars.username = req.cookies.username;
-    res.render("urls_index", templateVars);
-  }
+  templateVars.username = req.cookies.username;
+  res.render("urls_index", templateVars);
 });
 
 // Let us to the original longURL
