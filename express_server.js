@@ -19,14 +19,24 @@ function generateRandomString() {
   return randomStr;
 }
 
-var urlDatabase = {
+// Format:
+// var userDataBase = {
+//   id: {id: 'id', email: '', password: ''}
+// };
+var userDataBase = {};
+
+var urlDataBase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
 };
 
 let templateVars = {
-  urls: urlDatabase
+  urls: urlDataBase
 };
+
+app.get("/register", (req, res) => {
+  res.render("urls_register");
+});
 
 // Let us to form for new one
 app.get("/urls/new", (req, res) => {
@@ -35,10 +45,18 @@ app.get("/urls/new", (req, res) => {
 
 // Let us to especific page for shortURL
 app.get("/urls/:id", (req, res) => {
-  // get the long url from the urlDatabase to pass in the render function
+  // get the long url from the urlDataBase to pass in the render function
   templateVars.shortURL = req.params.id;
-  templateVars.url = urlDatabase[req.params.id];
+  templateVars.url = urlDataBase[req.params.id];
   res.render("urls_show", templateVars);
+});
+
+// POST to receive email and password
+app.post("/register", (req, res) => {
+  const id = Object.keys(userDataBase).length + 1;
+  userDataBase[id] = {"id": id, "email": req.body.email, "password": req.body.password};
+  console.log(userDataBase);
+  res.redirect("http://localhost:8080/urls/");
 });
 
 // Return the username cookie
@@ -60,31 +78,31 @@ app.get("/urls", (req, res) => {
 
 // Let us to the original longURL
 app.get("/u/:shortURL", (req, res) => {
-  let longURL = urlDatabase[req.params.shortURL];
+  let longURL = urlDataBase[req.params.shortURL];
   res.redirect(longURL);
 });
 
 // Delete
 app.post("/urls/:id/delete", (req, res) => {
-  delete urlDatabase[req.params.id];
+  delete urlDataBase[req.params.id];
   res.redirect("http://localhost:8080/urls/");
 });
 
 // Return the form wiht new longURL
 app.post("/urls/:id", (req, res) => {
-  urlDatabase[req.params.id] = req.params.longURL;
+  urlDataBase[req.params.id] = req.params.longURL;
   res.redirect("http://localhost:8080/urls/");
 });
 
 // Define new shortURL for every update
 app.post("/urls", (req, res) => {
   let shortURL = generateRandomString();
-  for (let key in urlDatabase) {
-    if (urlDatabase[key] === req.body.longURL) {
-      delete urlDatabase[key];
-      urlDatabase[shortURL] = req.body.longURL;
+  for (let key in urlDataBase) {
+    if (urlDataBase[key] === req.body.longURL) {
+      delete urlDataBase[key];
+      urlDataBase[shortURL] = req.body.longURL;
     } else {
-      urlDatabase[shortURL] = req.body.longURL;
+      urlDataBase[shortURL] = req.body.longURL;
     }
   }
   res.redirect('http://localhost:8080/urls/' + shortURL);
