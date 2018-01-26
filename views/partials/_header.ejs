@@ -2,9 +2,10 @@
 <header>
   <h1>Project: TinyApp - Lighthouse Labs</h1>
   <% if (user) { %>
-    <a href="/login">Login</a>
+  <p>User: <%= user['email'] %></p>
+  <a href="/login"><button type="submit" >Logout</button></a>
   <% } else  { %>
     <a href="/Register">Register</a>
   <% } %>
-  <!-- <p><a href="/urls/new" >Make new one</a><p><a href="/urls">Show all</a></p></p> -->
+  <p><a href="/urls/new" >Make new one</a><p><a href="/urls">Show all</a></p></p>
 </header>

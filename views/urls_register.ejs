@@ -7,11 +7,15 @@
   <header>
     <h1>Project: TinyApp - Lighthouse Labs</h1>
   </header>
-  <form method="POST" action="/register">
-    <label>Registration</label>
-      <input type="email" name="email" placeholder="email@email.ca">
-      <input type="password" name="password">
-      <button type="submit">Submit</button>
-  </form>
+  <label>Register:</label>
+  <fieldset style="width: 35%">
+    <form method="POST" action="/register">
+        <label>Email:</label>
+        <input type="email" name="email" placeholder="email@email.ca">
+        <label>Password:</label>
+        <input type="password" name="password">
+        <button type="submit">Submit</button>
+    </form>
+  </fieldset>
 </body>
 </html>

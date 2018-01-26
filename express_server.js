@@ -23,10 +23,9 @@ function hasUserEmail (email) {
   for (let user in users) {
     if (users[user].email === email) {
       return true;
-    } else {
-      return false;
     }
   }
+  return false;
 }
 
 function hasUserPassword (email, password) {
@@ -34,13 +33,11 @@ function hasUserPassword (email, password) {
     if (users[user].email === email) {
       if (users[user].password === password) {
         return true;
-      } else {
-        return false;
       }
-    } else {
       return false;
     }
   }
+  return false;
 }
 
 function getUser_id(email) {
@@ -56,9 +53,13 @@ function getUser_id(email) {
 //   "userRandomID": {
 //     id: "userRandomID",
 //     email: "user@example.com",
-//     password: "purple-monkey-dinosaur"
+//     password: "purple-monkey-dinosaur",
+//     urls: {
+//      "b2xVn2": "http://www.lighthouselabs.ca",
+//      "9sm5xK": "http://www.google.com"
+//     }
 //   },
-//  "user2RandomID": {
+//   "user2RandomID": {
 //     id: "user2RandomID",
 //     email: "user2@example.com",
 //     password: "dishwasher-funk"
@@ -123,15 +124,14 @@ app.post("/login", (req, res) => {
   } else if (!hasUserPassword(req.body.email, req.body.password)) {
     res.sendStatus(403);
   } else {
-    console.log(getUser_id(req.body.email));
     res.cookie('user_id', getUser_id(req.body.email));
     res.redirect("http://localhost:8080/urls/");
   }
 });
 
 app.post("/logout", (req, res) => {
-  res.clearCookie('username');
-  res.redirect("http://localhost:8080/urls/");
+  res.cookie('user_id', user_id);
+  res.redirect("http://localhost:8080/urls/login");
 });
 
 // Let us to the index
