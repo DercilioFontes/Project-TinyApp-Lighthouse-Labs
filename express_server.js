@@ -9,6 +9,35 @@ var PORT = process.env.PORT || 8080;
 
 app.set("view engine", "ejs");
 
+// ### DATABASES ###
+
+const usersDB = {};
+
+//Model:
+// const usersDB = {
+//   gkO5oa:
+//    { id: 'gkO5oa',
+//      email: 'dercilio@gmail.com',
+//      password: 'kkkk',
+//     },
+//   oZArTE:
+//    { id: 'oZArTE',
+//      email: 'sylvia@gmail.com',
+//      password: 'llll',
+//     }
+// };
+
+let urlsDB = {};
+
+// Model:
+// const urlsDB = {
+//   userID_1: {"b2xVn2": "http:www.lighthouselabs.ca",
+//             "9sm5xK": "http://www.google.com"},
+//   userID_1: {"b2xVn2": "http:www.lighthouselabs.ca",
+//             "9sm5xK": "http://www.google.com"}
+// };
+
+
 function generateRandomString() {
   let randomStr = "";
   const alphabetAndDigits = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -19,9 +48,9 @@ function generateRandomString() {
   return randomStr;
 }
 
-function hasUser(user_id) {
+function hasUser(userID) {
   for (let user in usersDB) {
-    if (user === user_id) {
+    if (user === userID) {
       return true;
     }
   }
@@ -78,36 +107,6 @@ function getLongURL(shortURL) {
   }
   return - 1;
 }
-
-
-// ### DATABASES ###
-
-const usersDB = {};
-
-//Model:
-// const usersDB = {
-//   gkO5oa:
-//    { id: 'gkO5oa',
-//      email: 'dercilio@gmail.com',
-//      password: 'kkkk',
-//     },
-//   oZArTE:
-//    { id: 'oZArTE',
-//      email: 'sylvia@gmail.com',
-//      password: 'llll',
-//     }
-// };
-
-let urlsDB = {};
-
-// Model:
-// const urlsDB = {
-//   userID_1: {"b2xVn2": "http:www.lighthouselabs.ca",
-//             "9sm5xK": "http://www.google.com"},
-//   userID_1: {"b2xVn2": "http:www.lighthouselabs.ca",
-//             "9sm5xK": "http://www.google.com"}
-// };
-
 
 // ### GETs ###
 
