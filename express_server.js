@@ -2,7 +2,6 @@ var express = require("express");
 var app = express();
 const bodyParser = require("body-parser");
 const cookieParser = require('cookie-parser');
-const ejsLint = require('ejs-lint');
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
 // default port 8080
@@ -50,7 +49,7 @@ function hasUserPassword (email, password) {
   return false;
 }
 
-function getUser_id(email) {
+function getUserID(email) {
   for (let user in usersDB) {
     if (usersDB[user].email === email) {
       return usersDB[user].id;
@@ -69,6 +68,18 @@ function getShortURL (url, userURLs) {
   return undefined;
 }
 
+// gets longURL by shortURL (if it doesn't exist, return - 1)
+function getLongURL(shortURL) {
+
+  for (let index in urlsDB) {
+    if (urlsDB[index].hasOwnProperty(shortURL)) {
+      return urlsDB[index][shortURL];
+    }
+  }
+  return - 1;
+}
+
+
 // ### DATABASES ###
 
 const usersDB = {};
@@ -77,12 +88,12 @@ const usersDB = {};
 // const usersDB = {
 //   gkO5oa:
 //    { id: 'gkO5oa',
-//      email: 'dercilioafontes@gmail.com',
+//      email: 'dercilio@gmail.com',
 //      password: 'kkkk',
 //     },
 //   oZArTE:
 //    { id: 'oZArTE',
-//      email: 'sylviafaalmeida@gmail.com',
+//      email: 'sylvia@gmail.com',
 //      password: 'llll',
 //     }
 // };
@@ -91,15 +102,16 @@ let urlsDB = {};
 
 // Model:
 // const urlsDB = {
-//   user_id_1: {"b2xVn2": "http:www.lighthouselabs.ca",
+//   userID_1: {"b2xVn2": "http:www.lighthouselabs.ca",
 //             "9sm5xK": "http://www.google.com"},
-//   user_id_2: {"b2xVn2": "http:www.lighthouselabs.ca",
+//   userID_1: {"b2xVn2": "http:www.lighthouselabs.ca",
 //             "9sm5xK": "http://www.google.com"}
 // };
 
 
 // ### GETs ###
 
+// For check the databases
 app.get('/db.json', (req, res) => {
   res.json({ usersDB, urlsDB });
 });
@@ -144,7 +156,7 @@ app.get("/urls", (req, res) => {
 
 // Sends us to the original longURL
 app.get("/u/:shortURL", (req, res) => {
-  let longURL = urlDataBase[req.params.shortURL];
+  const longURL = getLongURL(req.params.shortURL);
   res.redirect(longURL);
 });
 
@@ -159,9 +171,9 @@ app.post("/register", (req, res) => {
   } else if (hasUserEmail(req.body.email)) {
     res.sendStatus(400);
   } else {
-    const user_id = generateRandomString();
-    usersDB[user_id] = {"id": user_id, "email": req.body.email, "password": req.body.password};
-    res.cookie('user_id', user_id);
+    const userID = generateRandomString();
+    usersDB[userID] = {"id": userID, "email": req.body.email, "password": req.body.password};
+    res.cookie('user_id', userID);
     res.redirect("http://localhost:8080/urls/");
   }
 });
@@ -173,13 +185,13 @@ app.post("/login", (req, res) => {
   } else if (!hasUserPassword(req.body.email, req.body.password)) {
     res.sendStatus(403);
   } else {
-    res.cookie('user_id', getUser_id(req.body.email));
+    res.cookie('user_id', getUserID(req.body.email));
     res.redirect("http://localhost:8080/urls");
   }
 });
 
 app.post("/logout", (req, res) => {
-  //res.cookie('user_id', user_id); (Todo - ????)
+  res.clearCookie('user_id', user_id);
   res.redirect("http://localhost:8080/urls/login");
 });
 
