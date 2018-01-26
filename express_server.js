@@ -1,7 +1,8 @@
-var express = require("express");
-var app = express();
+const express = require("express");
 const bodyParser = require("body-parser");
 const cookieParser = require('cookie-parser');
+const bcrypt = require('bcrypt');
+var app = express();
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
 // default port 8080
@@ -66,17 +67,17 @@ function hasUserEmail (email) {
   return false;
 }
 
-function hasUserPassword (email, password) {
-  for (let user in usersDB) {
-    if (usersDB[user].email === email) {
-      if (usersDB[user].password === password) {
-        return true;
-      }
-      return false;
-    }
-  }
-  return false;
-}
+// function hasUserPassword (email, password) {
+//   for (let user in usersDB) {
+//     if (usersDB[user].email === email) {
+//       if (usersDB[user].password === password) {
+//         return true;
+//       }
+//       return false;
+//     }
+//   }
+//   return false;
+// }
 
 function getUserID(email) {
   for (let user in usersDB) {
@@ -164,14 +165,15 @@ app.get("/u/:shortURL", (req, res) => {
 // Receives email and password and
 // sets the cookie and redirects to /urls
 app.post("/register", (req, res) => {
-
   if(!req.body.email || !req.body.password) {
     res.sendStatus(400);
   } else if (hasUserEmail(req.body.email)) {
     res.sendStatus(400);
   } else {
     const userID = generateRandomString();
-    usersDB[userID] = {"id": userID, "email": req.body.email, "password": req.body.password};
+    const password = req.body.password;
+    const hashedPassword = bcrypt.hashSync(password, 10);
+    usersDB[userID] = {"id": userID, "email": req.body.email, "password": hashedPassword};
     res.cookie('user_id', userID);
     res.redirect("http://localhost:8080/urls/");
   }
@@ -181,11 +183,11 @@ app.post("/register", (req, res) => {
 app.post("/login", (req, res) => {
   if (!hasUserEmail(req.body.email)) {
     res.sendStatus(403);
-  } else if (!hasUserPassword(req.body.email, req.body.password)) {
-    res.sendStatus(403);
-  } else {
+  } else if (bcrypt.compareSync(req.body.password, usersDB[getUserID(req.body.email)].password)) {
     res.cookie('user_id', getUserID(req.body.email));
     res.redirect("http://localhost:8080/urls");
+  } else {
+    res.sendStatus(403);;
   }
 });
 
