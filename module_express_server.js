@@ -2,11 +2,13 @@
 
 module.exports = {
 
-/* ### DATABASES ### */
+  /* ### DATABASES ### */
 
   usersDB: {},
 
   urlsDB: {},
+
+  /* ### FUNCTIONS ### */
 
   generateRandomString: function() {
     let randomStr = "";
@@ -27,7 +29,7 @@ module.exports = {
           return true;
         }
       }
-    return false;
+      return false;
     }
   },
 
@@ -57,7 +59,7 @@ module.exports = {
     return undefined;
   },
 
-// gets longURL by shortURL (if it doesn't exist, return - 1)
+  // gets longURL by shortURL (if it doesn't exist, return - 1)
   getLongURL: function(shortURL) {
     for (let index in this.urlsDB) {
       if (this.urlsDB[index].hasOwnProperty(shortURL)) {

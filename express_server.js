@@ -10,7 +10,7 @@ var app = express();
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieSession({
   name: 'session',
-  keys: [process.env.SECRET_KEY || 'dvelopment'],
+  keys: [process.env.SECRET_KEY || 'dvelopment']
 }));
 
 // default port 8080
@@ -103,7 +103,7 @@ app.post("/login", (req, res) => {
     req.session.userID = m.getUserID(req.body.email);
     res.redirect("http://localhost:8080/urls");
   } else {
-    res.sendStatus(403);;
+    res.sendStatus(403);
   }
 });
 
