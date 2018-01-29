@@ -46,16 +46,19 @@ const urlsDB = {
 
   /* ### FUNCTIONS ### */
 
+  // Generate a rando striong of 6 letters (lower or Upper cases) and digits
+  // for using for id of user and for shor tURL
   generateRandomString: function() {
     let randomStr = "";
     const alphabetAndDigits = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
-    for (var i = 0; i < 6; i++) {
+    for (let i = 0; i < 6; i++) {
       randomStr += alphabetAndDigits.charAt(Math.floor(Math.random() * alphabetAndDigits.length));
     }
     return randomStr;
   },
 
+  // Checks if user exists by userID
   hasUser: function(userID) {
     if (!userID) {
       return false;
@@ -69,6 +72,7 @@ const urlsDB = {
     }
   },
 
+  // Checks if user exists by email
   hasUserEmail: function (email) {
     for (let user in this.usersDB) {
       if (this.usersDB[user].email === email) {
@@ -78,6 +82,7 @@ const urlsDB = {
     return false;
   },
 
+// Get userID by email
   getUserID: function(email) {
     for (let user in this.usersDB) {
       if (this.usersDB[user].email === email) {
@@ -86,6 +91,7 @@ const urlsDB = {
     }
   },
 
+// Get short URL by email
   getShortURL: function(url, userID) {
     for (let key in this.urlsDB[userID]) {
       if (this.urlsDB[userID][key] === url) {
@@ -94,11 +100,13 @@ const urlsDB = {
     }
   },
 
-  // gets longURL by shortURL (if it doesn't exist, return - 1)
-  getLongURL: function(shortURL, userID) {
-    if (this.urlsDB[userID].hasOwnProperty(shortURL)) {
-      return this.urlsDB[userID][shortURL];
+  // gets long URL by short URL (if it doesn't exist)
+  getLongURL: function(shortURL) {
+    for (let key in this.urlsDB) {
+      if (this.urlsDB[key].hasOwnProperty(shortURL)) {
+        return this.urlsDB[key][shortURL];
+        break;
+      }
     }
   }
-
 };

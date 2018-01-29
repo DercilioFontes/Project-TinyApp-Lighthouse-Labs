@@ -6,7 +6,7 @@ const bcrypt = require('bcrypt');
 /* ### DATABASES AND FUNCTIONS ### */
 const m = require('./module_express_server.js');
 
-var app = express();
+const app = express();
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieSession({
   name: 'session',
@@ -14,7 +14,7 @@ app.use(cookieSession({
 }));
 
 // default port 8080
-var PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 8080;
 
 app.set("view engine", "ejs");
 
@@ -28,19 +28,21 @@ app.set("view engine", "ejs");
 //   res.json({ usersDB_, urlsDB_ });
 // });
 
+// Sends user to the form for registration
 app.get("/register", (req, res) => {
   const userID = req.session.userID;
   if (m.hasUser(userID)) {
-    res.redirect("http://localhost:8080/urls");
+    res.redirect("/urls");
   } else {
     res.render("urls_register");
   }
 });
 
+// Sends user to the form for logging in
 app.get("/login", (req, res) => {
   const userID = req.session.userID;
   if (m.hasUser(userID)) {
-    res.redirect("http://localhost:8080/urls");
+    res.redirect("/urls");
   } else {
     res.render("urls_login");
   }
@@ -53,7 +55,7 @@ app.get("/urls/new", (req, res) => {
     const templateVars = { user: m.usersDB[userID]};
     res.render("urls_new", templateVars);
   } else {
-    res.redirect("http://localhost:8080/login");
+    res.redirect("/login");
   }
 });
 
@@ -83,23 +85,19 @@ app.get("/urls", (req, res) => {
   }
 });
 
-// Sends us to the original longURL
+// Sends everyone to the original longURL
 app.get("/u/:id", (req, res) => {
-  const userID = req.session.userID;
-  if (m.hasUser(userID)) {
-    const longURL = m.getLongURL(req.params.id, userID);
-    if (longURL) {
-      res.redirect("http://" + longURL);
-    } else {
-      res.status(400).send('Requested url doesn\'t exist. Create a new one (<a href="urls_new">New shortURL</a>)');
-    }
+  const longURL = m.getLongURL(req.params.id);
+  if (longURL) {
+    res.redirect("http://" + longURL);
   } else {
-    res.status(403).send('User not logged! Go back and go to login page (<a href="/login">Login</a>)');
+    res.status(400).send('Requested url doesn\'t exist. Create a new one (<a href="urls_new">New shortURL</a>)');
   }
 });
 
+// Sends user from root (/) to urls_index
 app.get("/", (req, res) => {
-  res.redirect("http://localhost:8080/urls");
+  res.redirect("/urls");
 });
 
 
@@ -118,7 +116,7 @@ app.post("/register", (req, res) => {
     const hashedPassword = bcrypt.hashSync(password, 10);
     m.usersDB[userID] = {"id": userID, "email": req.body.email, "password": hashedPassword};
     req.session.userID = userID;
-    res.redirect("http://localhost:8080/urls/");
+    res.redirect("/urls");
   }
 });
 
@@ -130,7 +128,7 @@ app.post("/login", (req, res) => {
     res.status(403).send('User not registered! Go to register page (<a href="/register">Register</a>).');
   } else if (bcrypt.compareSync(req.body.password, m.usersDB[m.getUserID(req.body.email)].password)) {
     req.session.userID = m.getUserID(req.body.email);
-    res.redirect("http://localhost:8080/urls");
+    res.redirect("/urls");
   } else {
     res.status(403).send('Invalid password! Try with correct password (<a href="/login">Login</a>)');
   }
@@ -139,7 +137,7 @@ app.post("/login", (req, res) => {
 // Logouts and destroys a session
 app.post("/logout", (req, res) => {
   req.session = null;
-  res.redirect("http://localhost:8080/urls");
+  res.redirect("/urls");
 });
 
 
@@ -149,7 +147,7 @@ app.post("/urls/:id/delete", (req, res) => {
   if (m.hasUser(userID)) {
     if (m.urlsDB[userID].hasOwnProperty(req.params.id)) {
       delete m.urlsDB[userID][req.params.id];
-      res.redirect("http://localhost:8080/urls/");
+      res.redirect("/urls/");
     } else {
       res.status(403).send(`shortURL not found. Create a new one (<a href="/urls_new">here</a>)`);
     }
@@ -165,12 +163,12 @@ app.post("/urls/:id", (req, res) => {
   if (m.hasUser(userID)) {
     if (m.urlsDB[userID].hasOwnProperty(req.params.id)) {
       m.urlsDB[userID][req.params.id] = req.body.longURL;
-      res.redirect('http://localhost:8080/urls/' + req.params.id);
+      res.redirect('/urls/' + req.params.id);
     } else {
       res.status(403).send(`shortURL not found. Create a new one (<a href="/urls_new">here</a>)`);
     }
   } else {
-    res.redirect("http://localhost:8080/urls/");
+    res.redirect("/urls/");
   }
 });
 
@@ -183,7 +181,7 @@ app.post("/urls", (req, res) => {
     userURLs[shortURL] = req.body.longURL;
     m.urlsDB[userID] = userURLs;
 
-    res.redirect('http://localhost:8080/urls/' + shortURL);
+    res.redirect('/urls/' + shortURL);
   } else {
     res.status(403).send('User not logged! Go back and go to login page (<a href="/login">Login</a>)');
   }
